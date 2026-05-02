@@ -8,6 +8,12 @@ const AddTask = () => {
   const navigate = useNavigate()
   
   const handleAdd = async () =>{
+
+    if(!taskData?.title || !taskData?.description){
+      alert("please fill all fields")
+      return
+    }
+    
     console.log(taskData)
     let result = await fetch("http://localhost:3200/add-task",{
       method: 'Post',
@@ -44,7 +50,7 @@ const AddTask = () => {
 
         <div className="mb-4">
           <label className="block font-medium mb-1" htmlFor="description">
-            Description:
+            Description:    
           </label>
           <textarea
           onChange={(event)=> setTaskData({...taskData, description: event.target.value})}

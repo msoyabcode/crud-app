@@ -5,7 +5,7 @@
 // const List = () => {
 //   const [arrayItem, setArrayItem] = useState([]);
 
-//   useEffect(() => {
+  // u seEffect(() => {
 //     getData();
 //   }, []);
 
@@ -59,9 +59,20 @@ const List = () => {
     }
   };
 
+
+  // delete funtion
+  const deletefuntion = async (_id) =>{
+    let item = await fetch("http://localhost:3200/delete/"+_id,{
+      method: "DELETE"
+    })
+    item = await item.json()
+    if(item.success){
+      getData()
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
-      
       {/* Title */}
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
         List Items
@@ -72,6 +83,7 @@ const List = () => {
         <div className="w-1/6">S. No.</div>
         <div className="w-2/6">Title</div>
         <div className="w-3/6">Description</div>
+        <div className="w-1/6 text-center">Action</div>
       </div>
 
       {/* Data Rows */}
@@ -86,8 +98,12 @@ const List = () => {
               <div className="w-2/6 font-medium text-gray-900">
                 {item.title}
               </div>
-              <div className="w-3/6 text-gray-600">
-                {item.description}
+              <div className="w-3/6 text-gray-600">{item.description}</div>
+              <div className="w-1/6 text-center">
+              <button className="bg-red-500 hover:bg-red-600 cursor-pointer px-4 py-1 text-white rounded-md transition"
+              onClick={()=>deletefuntion(item._id)}>
+                Delete
+              </button>
               </div>
             </div>
           );
