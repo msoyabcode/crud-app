@@ -8,6 +8,7 @@ const app = e();
 app.use(e.json())
 app.use(cors())
 
+// data ko add krna database mein 
 app.post("/add-task", async (req, res) =>{
     const db = await connection()
     const collection = db.collection(collectionName)
@@ -19,6 +20,7 @@ app.post("/add-task", async (req, res) =>{
     }
 })
 
+// jo data add hai databse mein usko get krna / nikalna
 app.get("/get-tasks", async (req, res) =>{
     const db = await connection()
     const collection = db.collection(collectionName)
@@ -31,6 +33,7 @@ app.get("/get-tasks", async (req, res) =>{
    
 })
 
+// item ko delete karna
  app.delete("/delete/:id", async (req, res) =>{
     const id = req.params.id
     const db = await connection()
@@ -44,9 +47,34 @@ app.get("/get-tasks", async (req, res) =>{
 
  })
 
+// Edit feature edit bale item ko fetch karna
+app.get("/get-item/:id", async (req, res) =>{
+    const id = req.params.id
+    const db = await connection()
+    const collection = db.collection(collectionName)
+    let result = await collection.findOne({_id: new ObjectId(id)})
+    if(result){
+        res.send({message: "item is fetched", success: true, result})
+    } else{
+        res.send({message: "item is not fetchd"})
+    }
+})
 
 
+app.put("/edit-item/:id", async  (req, res) =>{
+    const id = req.params.id
+    let data = req.body
+     delete data._id;
+    const db = await connection()
+    const collection = db.collection(collectionName)
+    let result = await collection.updateOne({_id: new ObjectId(id)},   { $set: data })
+    if(result){
+        res.send({message: "item is updated", success: true, result})
+    }else{
+        res.send({message: "item is not update", success: false})
+    }
 
+})
 
 
 

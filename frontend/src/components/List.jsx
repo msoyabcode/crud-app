@@ -5,7 +5,7 @@
 // const List = () => {
 //   const [arrayItem, setArrayItem] = useState([]);
 
-  // u seEffect(() => {
+// u seEffect(() => {
 //     getData();
 //   }, []);
 
@@ -43,9 +43,11 @@
 // export default List;
 
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const List = () => {
   const [arrayItem, setArrayItem] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     getData();
@@ -59,20 +61,19 @@ const List = () => {
     }
   };
 
-
   // delete funtion
-  const deletefuntion = async (_id) =>{
-    let item = await fetch("http://localhost:3200/delete/"+_id,{
-      method: "DELETE"
-    })
-    item = await item.json()
-    if(item.success){
-      getData()
+  const deletefuntion = async (_id) => {
+    let item = await fetch("http://localhost:3200/delete/" + _id, {
+      method: "DELETE",
+    });
+    item = await item.json();
+    if (item.success) {
+      getData();
     }
-  }
+  };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
+    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
       {/* Title */}
       <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
         List Items
@@ -94,16 +95,27 @@ const List = () => {
               key={item._id}
               className="flex justify-between p-4 border-b hover:bg-gray-50 transition"
             >
-              <div className="w-1/6 text-gray-700">{index + 1}</div>
-              <div className="w-2/6 font-medium text-gray-900">
+              <div className="w-1/6 text-gray-700 flex items-center">
+                {index + 1}
+              </div>
+              <div className="w-2/6 font-medium text-gray-900 flex items-center">
                 {item.title}
               </div>
-              <div className="w-3/6 text-gray-600">{item.description}</div>
-              <div className="w-1/6 text-center">
-              <button className="bg-red-500 hover:bg-red-600 cursor-pointer px-4 py-1 text-white rounded-md transition"
-              onClick={()=>deletefuntion(item._id)}>
-                Delete
-              </button>
+              <div className="w-3/6 text-gray-600 flex items-center">
+                {item.description}
+              </div>
+              <div className="w-1/6 text-center flex items-center gap-1.5">
+                <button
+                  className="bg-red-500 hover:bg-red-600 cursor-pointer px-4 py-1 text-white rounded-md shadow-sm transition "
+                  onClick={() => deletefuntion(item._id)}
+                >
+                  Delete
+                </button>
+                <Link to={"/edit/"+item._id}
+                  className="bg-blue-500 hover:bg-blue-600 cursor-pointer px-4 py-1 text-white rounded-md shadow-sm transition "> 
+                Edit
+                </Link>
+                
               </div>
             </div>
           );
