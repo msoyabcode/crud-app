@@ -1,53 +1,10 @@
-// import React from "react";
-// import { useEffect } from "react";
-// import { useState } from "react";
-
-// const List = () => {
-//   const [arrayItem, setArrayItem] = useState([]);
-
-// u seEffect(() => {
-//     getData();
-//   }, []);
-
-//   const getData = async () => {
-//     let list = await fetch("http://localhost:3200/get-tasks");
-//     list = await list.json();
-//     if (list.success) {
-//       setArrayItem(list.result);
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-2xl mx-auto mt-13 p-6">
-//       <h1 className="text-3xl font-bold text-center mb-13">List Item</h1>
-//       <ul className="flex justify-between font-semibold bg-gray-200 rounded p-3">
-//         <li>S. NO.</li>
-//         <li>Title</li>
-//         <li>Description</li>
-//       </ul>
-
-//       {arrayItem &&
-//         arrayItem.map((item, index) => {
-//             return(
-//           <ul key={item._id} className=" border-gray-00 hover:bg-gray-2 flex justify-between border-b p-3">
-//             <li>{index + 1}</li>
-//             <li>{item.title}</li>
-//             <li>{item.description}</li>
-//           </ul>
-//             )
-//         })}
-//     </div>
-//   );
-// };
-
-// export default List;
-
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const List = () => {
   const [arrayItem, setArrayItem] = useState([]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [selectedItem, setSelectedItem] = useState([]);
 
   useEffect(() => {
     getData();
@@ -72,6 +29,47 @@ const List = () => {
     }
   };
 
+  // header checkbox ka funciton
+  const SelectAll = (event) => {
+    console.log(event.target.checked);
+    if (event.target.checked) {
+      let item = arrayItem.map((item) => item._id);
+      setSelectedItem(item);
+    } else {
+      setSelectedItem([]);
+    }
+  };
+
+  // single checkbox select
+  const selectSingleItem = (id) => {
+    console.log(id);
+    if (selectedItem.includes(id)) {
+      let item = selectedItem.filter((item) => item != id);
+      setSelectedItem(item);
+    } else {
+      setSelectedItem([id, ...selectedItem]);
+    }
+  };
+
+
+  //  multiple delete funciton
+  const deleteItems = async () =>{
+    console.log(selectedItem)
+    let result = await fetch("http://localhost:3200/multiple-items",{
+      method: "DELETE",
+      body: JSON.stringify(selectedItem),
+      headers:{
+        "Content-Type": 'application/json'
+      }
+    })
+   result = await result.json()
+    if(result.success){
+      getData()
+      setSelectedItem([])
+    }
+  }
+
+
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-xl">
       {/* Title */}
@@ -80,7 +78,14 @@ const List = () => {
       </h1>
 
       {/* Header Row */}
+      <button className="bg-amber-600 hover:bg-yellow-800 cursor-pointer px-4 py-1 text-white text-lg rounded-md shadow-2xl transition  mb-2"
+      onClick={deleteItems}>
+        Delete multiple items
+      </button>
       <div className="flex justify-between bg-gray-100 p-4 rounded-md font-semibold text-gray-700 border">
+        <div className="w-1/6">
+          <input onChange={SelectAll} type="checkbox" />
+        </div>
         <div className="w-1/6">S. No.</div>
         <div className="w-2/6">Title</div>
         <div className="w-3/6">Description</div>
@@ -95,6 +100,13 @@ const List = () => {
               key={item._id}
               className="flex justify-between p-4 border-b hover:bg-gray-50 transition"
             >
+              <div className="w-1/6">
+                <input
+                  onChange={() => selectSingleItem(item._id)}
+                  checked={selectedItem.includes(item._id)}
+                  type="checkbox"
+                />
+              </div>
               <div className="w-1/6 text-gray-700 flex items-center">
                 {index + 1}
               </div>
@@ -111,11 +123,12 @@ const List = () => {
                 >
                   Delete
                 </button>
-                <Link to={"/edit/"+item._id}
-                  className="bg-blue-500 hover:bg-blue-600 cursor-pointer px-4 py-1 text-white rounded-md shadow-sm transition "> 
-                Edit
+                <Link
+                  to={"/edit/" + item._id}
+                  className="bg-blue-500 hover:bg-blue-600 cursor-pointer px-4 py-1 text-white rounded-md shadow-sm transition "
+                >
+                  Edit
                 </Link>
-                
               </div>
             </div>
           );

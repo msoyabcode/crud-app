@@ -8,6 +8,7 @@ const app = e();
 app.use(e.json())
 app.use(cors())
 
+// add task
 // data ko add krna database mein 
 app.post("/add-task", async (req, res) =>{
     const db = await connection()
@@ -20,6 +21,7 @@ app.post("/add-task", async (req, res) =>{
     }
 })
 
+// get all tasks
 // jo data add hai databse mein usko get krna / nikalna
 app.get("/get-tasks", async (req, res) =>{
     const db = await connection()
@@ -33,6 +35,7 @@ app.get("/get-tasks", async (req, res) =>{
    
 })
 
+// single delete
 // item ko delete karna
  app.delete("/delete/:id", async (req, res) =>{
     const id = req.params.id
@@ -47,6 +50,7 @@ app.get("/get-tasks", async (req, res) =>{
 
  })
 
+//  get single item (edit ke liye)
 // Edit feature edit bale item ko fetch karna
 app.get("/get-item/:id", async (req, res) =>{
     const id = req.params.id
@@ -60,7 +64,7 @@ app.get("/get-item/:id", async (req, res) =>{
     }
 })
 
-
+// update item
 app.put("/edit-item/:id", async  (req, res) =>{
     const id = req.params.id
     let data = req.body
@@ -76,12 +80,21 @@ app.put("/edit-item/:id", async  (req, res) =>{
 
 })
 
+// multiple delete
+app.delete("/multiple-items", async (req, res) =>{
+    const db = await connection()
+    const ids = req.body
+    const objectIds = ids.map((item) => new ObjectId(item))
 
-
-
-
-
-
+    const collection = db.collection(collectionName)
+    const result = await collection.deleteMany({_id: {$in:objectIds}})
+    if(result){
+        res.send({message: "task deleted", success:true, result})
+    }else{
+        res.send({message: "try again", success: false})
+    }
+}
+)
 
 app.listen(3200);
   
