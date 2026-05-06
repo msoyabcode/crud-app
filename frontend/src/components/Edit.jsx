@@ -15,21 +15,26 @@ const Edit = () => {
         fetchItem()
     }, [])
 
+    // fetchItem 
     const fetchItem = async () =>{
-        let result =  await fetch("http://localhost:3200/get-item/"+id)
+        let result =  await fetch("http://localhost:3200/get-item/"+id,{
+          credentials: 'include'
+        })
         result = await result.json()
         if(result.success){
             setItem(result.result)
         }
     } 
 
+    // update
     const Update = async () =>{
       let response = await fetch("http://localhost:3200/edit-item/"+id,{
         method: "PUT",
         body: JSON.stringify(item),
         headers:{
           'Content-type': 'application/json'
-        }
+        },
+        credentials: 'include'
       })
     
      response = await response.json()

@@ -11,21 +11,28 @@ const List = () => {
   }, []);
 
   const getData = async () => {
-    let list = await fetch("http://localhost:3200/get-tasks");
+    let list = await fetch("http://localhost:3200/get-tasks",{
+      credentials: 'include'
+    });
     list = await list.json();
     if (list.success) {
       setArrayItem(list.result);
+    }else{
+      alert("try again")
     }
   };
 
   // delete funtion
   const deletefuntion = async (_id) => {
     let item = await fetch("http://localhost:3200/delete/" + _id, {
+      credentials: 'include',
       method: "DELETE",
     });
     item = await item.json();
     if (item.success) {
       getData();
+    }else{
+      alert("try again")
     }
   };
 
@@ -56,6 +63,7 @@ const List = () => {
   const deleteItems = async () =>{
     console.log(selectedItem)
     let result = await fetch("http://localhost:3200/multiple-items",{
+      credentials: 'include',
       method: "DELETE",
       body: JSON.stringify(selectedItem),
       headers:{
@@ -66,6 +74,8 @@ const List = () => {
     if(result.success){
       getData()
       setSelectedItem([])
+    }else{
+      alert("try again")
     }
   }
 

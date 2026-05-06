@@ -18,16 +18,18 @@ const AddTask = () => {
     let result = await fetch("http://localhost:3200/add-task",{
       method: 'Post',
       body: JSON.stringify(taskData),
+      credentials: 'include',
       headers:{
         'Content-Type': 'Application/Json'
       }
     })
     result = await result.json()
-    if(result){
+    if(result.success){
       console.log("new task added")
+          navigate("/")
+    }else{
+      alert("try again")
     }
-
-    navigate("/")
   }
 
   return (

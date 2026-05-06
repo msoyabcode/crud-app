@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -6,8 +6,34 @@ import { Link } from "react-router-dom";
 const Signup = () => {
   
   const [data, setData] = useState()
-  
+  const navigate = useNavigate()
 
+  useEffect(()=>{
+    if(localStorage.getItem("email")){
+      navigate("/")
+    }
+  })
+  // data ko post krna or token lena backend se
+  const handleSignup = async () =>{
+    let result = await fetch("http://localhost:3200/signup",{
+      method: "POST",
+      body: JSON.stringify(data),
+      headers:{
+        'Content-type': 'application/json'
+      }
+    })
+    result = await result.json()
+    if(result.success){
+      console.log(result)
+      // document.cookie = "token"+result.token
+      document.cookie = `token=${result.token}; path=/`
+      localStorage.setItem("email", data.email)
+      navigate("/")
+    }else{
+      alert("try again")
+    }
+
+  }
   return (
     <div className="max-w-md mx-auto mt-20  p-6 shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold mt-6 text-center">Sign up</h1>
@@ -55,7 +81,7 @@ const Signup = () => {
       </div>
 
       <button className="bg-blue-500 w-full p-2 rounded-2xl cursor-pointer text-white hover:bg-blue-600 transition text-lg"
-      onClick={()=>console.log(data)}>
+      onClick={handleSignup}>
         Sign up
       </button>
 

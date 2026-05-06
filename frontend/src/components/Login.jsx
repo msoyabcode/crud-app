@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -6,7 +6,34 @@ import { Link } from "react-router-dom";
 const Login = () => {
   
   const [data, setData] = useState()
+  const navigate = useNavigate()
   
+  useEffect(()=>{
+    if(localStorage.getItem("email")){
+      navigate("/")
+    }
+  })
+
+  const handleLogin = async () =>{
+    let result = await fetch("http://localhost:3200/login",{
+      method: "POST",
+      body: JSON.stringify(data),
+      headers:{
+        'Content-type': 'application/json'
+      },
+      
+    })
+    result = await result.json()
+    if(result.success){
+      // document.cookie = "token"+result.token
+      document.cookie = `token=${result.token}; path=/`
+      localStorage.setItem('email', data.email)
+      window.dispatchEvent(new Event('localStorage-change'))
+      navigate("/")
+    }else{
+      alert("try again")
+    }
+  }
 
   return (
     <div className="max-w-md mx-auto mt-20  p-6 shadow-lg rounded-lg">
@@ -33,7 +60,7 @@ const Login = () => {
         <input 
         onChange={(event) => setData({...data, password:event.target.value})}
           className="w-full border border-gray-300 p-2 rounded "
-          type="text"
+          type="password"
           name="password"
           id="password"
           placeholder="Enter Your password"
@@ -41,7 +68,7 @@ const Login = () => {
       </div>
 
       <button className="bg-blue-500 w-full p-2 rounded-2xl cursor-pointer text-white hover:bg-blue-600 transition text-lg"
-      onClick={()=>console.log(data)}>
+      onClick={handleLogin}>
         Login
       </button>
 
@@ -55,19 +82,3 @@ const Login = () => {
 export default Login;
 
 
-
-// 🔐 Authentication ka actual flow
-
-// Main aapko clear roadmap deta hoon:
-
-// 1. User Schema banaya ✔️ (ye wala step)
-// 2. Signup API
-// user register karega
-// password hash hoga
-// 3. Login API
-// email check
-// password compare
-// 4. Token (JWT)
-// user ko token diya jaata hai
-// 5. Protected Routes
-// sirf logged-in user access kare
