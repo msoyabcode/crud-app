@@ -1,6 +1,4 @@
 
-import dotenv from "dotenv"
-dotenv.config()
 import { MongoClient } from "mongodb"
 
 // const url = "mongodb+srv://soyabmohd:soyabmohd%40123@cluster0.imsh0lw.mongodb.net/?retryWrites=true&w=majority";

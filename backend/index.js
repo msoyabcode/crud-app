@@ -1,3 +1,7 @@
+
+
+import dotenv from "dotenv"
+dotenv.config()
 import e from "express";
 import { collectionName, connection } from "./dbconfig.js";
 import cors from "cors";
